@@ -2,23 +2,18 @@
 set -eux
 
 ips=/tmp/rospozor-ips
-curl -L -o${ips} -z${ips} --remote-time 'https://reestr.rublacklist.net/api/v2/ips/csv'
-split -l 600000 ${ips} ${ips}-
+#curl -L -o${ips} -z${ips} --remote-time 'https://reestr.rublacklist.net/api/v2/ips/csv'
+split -l 300000 ${ips} ${ips}-
 
 ipset flush rospozor-auto-1
 ipset flush rospozor-auto-2
-ipset flush rospozor-auto-3
-ipset flush rospozor-auto-4
-
-ipset create rospozor-auto-1 hash:ip hashsize 16777216 maxelem 1000000
-ipset create rospozor-auto-2 hash:ip hashsize 16777216 maxelem 1000000
-ipset create rospozor-auto-3 hash:ip hashsize 16777216 maxelem 1000000
-ipset create rospozor-auto-4 hash:ip hashsize 16777216 maxelem 1000000
-
-#ipset -exist create rospozor-auto hash:ip counters family inet hashsize 4096 maxelem 2500000
-#ipset -exist create rospozor-auto hash:ip family inet hashsize 16777216 maxelem 16777216
+#ipset flush rospozor-auto-3
+#ipset flush rospozor-auto-4
+ipset flush blacklist-v6
 
 ipset restore -exist -file <(awk -F, '/:/{next} {print "add rospozor-auto-1 " $1}' "${ips}-aa")
 ipset restore -exist -file <(awk -F, '/:/{next} {print "add rospozor-auto-2 " $1}' "${ips}-ab")
-ipset restore -exist -file <(awk -F, '/:/{next} {print "add rospozor-auto-3 " $1}' "${ips}-ac")
-ipset restore -exist -file <(awk -F, '/:/{next} {print "add rospozor-auto-4 " $1}' "${ips}-ad")
+#ipset restore -exist -file <(awk -F, '/:/{next} {print "add rospozor-auto-3 " $1}' "${ips}-ac")
+#ipset restore -exist -file <(awk -F, '/:/{next} {print "add rospozor-auto-4 " $1}' "${ips}-ad")
+ipset restore -exist -file <(awk -F, '/:/ {print "add blacklist-v6 " $1}' "${ips}-aa")
+ipset restore -exist -file <(awk -F, '/:/ {print "add blacklist-v6 " $1}' "${ips}-ab")
