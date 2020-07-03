@@ -1,0 +1,9 @@
+>adb devices
+serial device
+>adb shell
+
+
+pm grant net.dinglisch.android.taskerm android.permission.PACKAGE_USAGE_STATS
+pm grant net.dinglisch.android.taskerm android.permission.DUMP
+pm grant net.dinglisch.android.taskerm android.permission.WRITE_SECURE_SETTINGS
+pm grant net.dinglisch.android.taskerm android.permission.CHANGE_CONFIGURATION
