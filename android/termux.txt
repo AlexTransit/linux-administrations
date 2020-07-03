@@ -1,0 +1,74 @@
+pkg upgrade
+pkg install openssh
+
+$ cat .ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK3k2dbQZUeWaQJvgmRtcZCJyz/uY1hGx7ktdMRfYUJe alexm@Alien
+
+mkdir .termux
+nano .termux/termux.properties
+
+cat <<'END' > .termux/termux.properties
+extra-keys = [ \
+ ['ESC','-','_','/','HOME','UP','END','PGUP','DEL'], \
+ ['TAB','CTRL','ALT',':','LEFT','DOWN','RIGHT','PGDN','BKSP'] \
+]
+END
+
+### 
+
+cat <<'END' > .bashrc
+alias la="ls -la"
+function getroboip() {
+roboip=$(ip neigh |grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
+}
+
+rip() {
+getroboip
+echo $roboip
+}
+
+rap() {
+getroboip
+echo "connect $roboip"
+ssh -oStrictHostKeyChecking=no $roboip
+}
+
+robo() {
+ssh vm$1s 'sudo wpa_cli select_network 0 && sudo wpa_cli enable_network 1 && sudo systemctl restart wg-quick@robot.service'
+ssh -oStrictHostKeyChecking=no $(ip neigh |grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
+}
+
+ba() {
+echo -e "\033[32m ----- backup all from connected robot \033[0m"
+list_files=(
+/etc/hostname
+/etc/hosts
+/etc/wpa_supplicant/wpa_supplicant.conf
+/etc/wireguard/robot.conf
+/home/vmc/tele.hcl
+/home/vmc/config.hcl
+/home/vmc/local.hcl
+/home/vmc/.ssh/config
+/home/vmc/.ssh/id_ed25519
+/home/vmc/.ssh/id_ed25519.pub
+/home/vmc/vender-db/inventory/*
+)
+getroboip
+ssh $roboip sudo tar cvf - "${list_files[@]}" > vm.tar
+if [ $? != 0 ]; then
+        echo -e "\033[41m ------ FAILLLLLL  ----------  \033[0m"
+else
+        echo -e "\033[32m ----- backup complete \033[0m"
+fi
+}
+
+# restore all to connected robot
+ra() {
+echo -e "\033[32m ----- restore to connected \033[0m"
+getroboip
+echo $roboip
+scp vm.tar $roboip:
+ssh $roboip 'sudo tar xvf vm.tar -C /'
+echo -e "\033[32m ----- restore complete \033[0m"
+}
+END
