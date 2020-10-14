@@ -1,0 +1,1 @@
+reg add HKLM\SOFTWARE\Classes\.go /v PerceivedType /t REG_SZ /d text
