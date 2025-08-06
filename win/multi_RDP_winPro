@@ -1,0 +1,14 @@
+https://winitpro.ru/index.php/2015/09/02/neskolko-rdp-sessij-v-windows-10/
+https://winitpro.ru/index.php/2024/12/09/zapusk-remoteapp-v-windows/
+
+system / remote desktop enable
+install 
+https://github.com/stascorp/rdpwrap/releases
+
+put 
+https://raw.githubusercontent.com/sebaxakerhtc/rdpwrap.ini/master/rdpwrap.ini
+to
+C:\Program Files\RDP Wrapper\rdpwrap.ini
+
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fSingleSessionPerUser /t REG_DWORD /d 0 /f
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" /v fAllowUnlistedRemotePrograms /t REG_DWORD /d 1
